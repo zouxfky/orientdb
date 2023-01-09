@@ -32,7 +32,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 @Deprecated
-//  test111111111111vbd
 public class ODatabaseHelper {
   @Deprecated
   public static void createDatabase(ODatabase database, final String url) throws IOException {

@@ -59,6 +59,9 @@ public class OChannelBinaryAsynchClient extends OChannelBinary {
   private volatile long lastUse;
   private volatile boolean inUse;
 
+  /*
+  连接对象构造方法，socket连接服务器，写入相应信息进数据流
+   */
   public OChannelBinaryAsynchClient(
       final String remoteHost,
       final int remotePort,
@@ -124,6 +127,9 @@ public class OChannelBinaryAsynchClient extends OChannelBinary {
     }
   }
 
+  /*
+  异常处理
+   */
   @SuppressWarnings("unchecked")
   private static RuntimeException createException(
       final String iClassName, final String iMessage, final Exception iPrevious) {
@@ -167,6 +173,9 @@ public class OChannelBinaryAsynchClient extends OChannelBinary {
     return beginResponse(iRequesterId, timeout, token);
   }
 
+  /*
+        开始响应服务端，开启读取锁，读取数据流
+   */
   public byte[] beginResponse(final int iRequesterId, final long iTimeout, final boolean token)
       throws IOException {
     try {
@@ -216,6 +225,9 @@ public class OChannelBinaryAsynchClient extends OChannelBinary {
     return null;
   }
 
+  /*
+      结束响应服务端，释放读取锁
+   */
   public void endResponse() throws IOException {
     // WAKE UP ALL THE WAITING THREADS
     try {
@@ -227,11 +239,17 @@ public class OChannelBinaryAsynchClient extends OChannelBinary {
     }
   }
 
+  /*
+      结束客户端请求，清空缓冲区数据，释放写入锁
+   */
   public void endRequest() throws IOException {
     flush();
     releaseWriteLock();
   }
 
+  /*
+      关闭通信
+   */
   @Override
   public void close() {
     try {
@@ -241,6 +259,9 @@ public class OChannelBinaryAsynchClient extends OChannelBinary {
     }
   }
 
+  /*
+        添加读取锁，清空输入，释放读取锁
+   */
   @Override
   public void clearInput() throws IOException {
     acquireReadLock();
@@ -270,6 +291,9 @@ public class OChannelBinaryAsynchClient extends OChannelBinary {
     return srvProtocolVersion;
   }
 
+  /*
+        获取服务器地址
+   */
   public String getServerURL() {
     return serverURL;
   }
@@ -278,6 +302,9 @@ public class OChannelBinaryAsynchClient extends OChannelBinary {
     return getLockWrite().tryAcquireLock();
   }
 
+  /*
+        释放锁
+   */
   public void unlock() {
     getLockWrite().unlock();
   }
@@ -286,6 +313,9 @@ public class OChannelBinaryAsynchClient extends OChannelBinary {
     void onException(Throwable ex);
   }
 
+  /*
+      判断响应状态值，Ok或异常
+   */
   public int handleStatus(
       final byte iResult, final int iClientTxId, ExceptionHandler exceptionHandler)
       throws IOException {
@@ -325,11 +355,17 @@ public class OChannelBinaryAsynchClient extends OChannelBinary {
     return handleStatus(iResult, iClientTxId, this::handleException);
   }
 
+  /*
+        使用指定的超时时间
+   */
   private void setReadResponseTimeout() throws SocketException {
     final Socket s = socket;
     if (s != null && s.isConnected() && !s.isClosed()) s.setSoTimeout(getSocketTimeout());
   }
 
+  /*
+        反序列化异常
+   */
   private Throwable deserializeException(final byte[] serializedException) throws IOException {
     final ByteArrayInputStream inputStream = new ByteArrayInputStream(serializedException);
     final ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
@@ -346,6 +382,9 @@ public class OChannelBinaryAsynchClient extends OChannelBinary {
     return (Throwable) throwable;
   }
 
+  /*
+        异常处理
+   */
   public void handleException(Throwable throwable) {
     if (throwable instanceof OException) {
       try {
@@ -388,6 +427,9 @@ public class OChannelBinaryAsynchClient extends OChannelBinary {
     beginRequest(iCommand, nodeSession);
   }
 
+  /*
+      开始客户端请求，将sessionID、命令、token写入输出流
+   */
   public void beginRequest(byte iCommand, OStorageRemoteNodeSession nodeSession)
       throws IOException {
     if (nodeSession == null)

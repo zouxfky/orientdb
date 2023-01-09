@@ -16,11 +16,17 @@ public class ODatabaseImportRemote extends ODatabaseImpExpAbstract {
 
   private String options;
 
+  /*
+      构造数据库导入对象，直接调用父级构造方法
+   */
   public ODatabaseImportRemote(
       ODatabaseDocumentInternal iDatabase, String iFileName, OCommandOutputListener iListener) {
     super(iDatabase, iFileName, iListener);
   }
 
+  /*
+    开启一个新线程，调用导入数据库函数
+   */
   @Override
   public void run() {
     try {
@@ -36,6 +42,9 @@ public class ODatabaseImportRemote extends ODatabaseImpExpAbstract {
     return super.setOptions(iOptions);
   }
 
+  /*
+        new一个文件对象，调用OStorageRemote类中的importDatabase方法
+   */
   public void importDatabase() throws ODatabaseImportException {
     OStorageRemote storage =
         (OStorageRemote) ((ODatabaseDocumentInternal) getDatabase()).getStorage();
