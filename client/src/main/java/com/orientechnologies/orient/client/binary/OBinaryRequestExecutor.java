@@ -3,9 +3,8 @@ package com.orientechnologies.orient.client.binary;
 import com.orientechnologies.orient.client.remote.OBinaryResponse;
 import com.orientechnologies.orient.client.remote.message.*;
 
-/*
-  二进制请求执行接口，供各个操作实现类,传入参数为各类请求的request
-
+/**
+ * 二进制请求执行接口，供各个操作实现类,传入参数为各类请求的request
  */
 public interface OBinaryRequestExecutor {
 

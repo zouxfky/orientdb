@@ -27,8 +27,8 @@ public class ORemoteURLs {
   private List<String> initialServerURLs;
   private int nextServerToConnect;
 
-  /*
-      URLs构造方法，将传入hosts循环添加进serverURLs中
+  /**
+   * URLs构造方法，将传入hosts循环添加进serverURLs中
    */
   public ORemoteURLs(String[] hosts, OContextConfiguration config) {
     for (String host : hosts) {
@@ -38,23 +38,23 @@ public class ORemoteURLs {
     this.nextServerToConnect = 0;
   }
 
-  /*
-      从serverURLs移除一个URL
+  /**
+   * 从serverURLs移除一个URL
    */
   public synchronized void remove(String serverUrl) {
     serverURLs.remove(serverUrl);
     this.nextServerToConnect = 0;
   }
 
-  /*
-    获取serverURLs
+  /**
+   * 获取serverURLs
    */
   public synchronized List<String> getUrls() {
     return Collections.unmodifiableList(serverURLs);
   }
 
-  /*
-      从serverURLs移除一个URL，获取第一个URL
+  /**
+   * 从serverURLs移除一个URL，获取第一个URL
    */
   public synchronized String removeAndGet(String url) {
     remove(url);
@@ -64,8 +64,8 @@ public class ORemoteURLs {
     else return null;
   }
 
-  /*
-    清除掉serverURLs，再将传入URLs全部添加进serverURLs
+  /**
+   * 清除掉serverURLs，再将传入URLs全部添加进serverURLs
    */
   public synchronized void addAll(List<String> toAdd, OContextConfiguration clientConfiguration) {
     if (toAdd.size() > 0) {
@@ -111,8 +111,8 @@ public class ORemoteURLs {
     return DEFAULT_SSL_PORT;
   }
 
-  /*
-      将字符串形式的URLs解析成list
+  /**
+   * 将字符串形式的URLs解析成list
    */
   private static List<String> parseAddressesFromUrl(String url) {
     List<String> addresses = new ArrayList<>();
@@ -128,8 +128,8 @@ public class ORemoteURLs {
     return addresses;
   }
 
-  /*
-      将字符串形式的URLs解析成list，再传入serverURLs
+  /**
+   * 将字符串形式的URLs解析成list，再传入serverURLs
    */
   public synchronized String parseServerUrls(
       String url, OContextConfiguration contextConfiguration) {
@@ -209,8 +209,8 @@ public class ORemoteURLs {
     return toAdd;
   }
 
-  /*
-      获取下一个连接的serverURL
+  /**
+   * 获取下一个连接的serverURL
    */
   private synchronized String getNextConnectUrl(
       OStorageRemoteSession session, OContextConfiguration contextConfiguration) {
@@ -235,8 +235,8 @@ public class ORemoteURLs {
     return serverURL;
   }
 
-  /*
-        先获取当前会话的index，再通过index获取下一个serverURL
+  /**
+   * 先获取当前会话的index，再通过index获取下一个serverURL
    */
   public synchronized String getServerURFromList(
       boolean iNextAvailable,
@@ -273,8 +273,8 @@ public class ORemoteURLs {
     return serverURL;
   }
 
-  /*
-          获取下一个可用的serverURL
+  /**
+   * 获取下一个可用的serverURL
    */
   public synchronized String getNextAvailableServerURL(
       boolean iIsConnectOperation,

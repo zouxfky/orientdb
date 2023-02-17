@@ -242,10 +242,26 @@ public class OStorageRemote implements OStorageProxy, ORemotePushHandler, OStora
 
   public static final String ADDRESS_SEPARATOR = ";";
 
+  /**
+   * 将hosts列表以；分隔为一个字符串
+   * @param hosts
+   * @param name
+   * @return
+   */
   private static String buildUrl(String[] hosts, String name) {
     return String.join(ADDRESS_SEPARATOR, hosts) + "/" + name;
   }
 
+  /**
+   * 构造方法
+   * @param hosts
+   * @param name
+   * @param context
+   * @param iMode
+   * @param connectionManager
+   * @param config
+   * @throws IOException
+   */
   public OStorageRemote(
       final ORemoteURLs hosts,
       String name,
@@ -296,6 +312,11 @@ public class OStorageRemote implements OStorageProxy, ORemotePushHandler, OStora
     this.context = context;
   }
 
+  /**
+   * 规范化名称
+   * @param name
+   * @return
+   */
   private String normalizeName(String name) {
     if (OStringSerializerHelper.contains(name, '/')) {
       name = name.substring(name.lastIndexOf("/") + 1);
@@ -331,6 +352,16 @@ public class OStorageRemote implements OStorageProxy, ORemotePushHandler, OStora
     this.sharedContext = sharedContext;
   }
 
+  /**
+   * 异步网络请求不重试
+   * @param request
+   * @param mode
+   * @param recordId
+   * @param callback
+   * @param errorMessage
+   * @param <T>
+   * @return
+   */
   public <T extends OBinaryResponse> T asyncNetworkOperationNoRetry(
       final OBinaryAsyncRequest<T> request,
       int mode,
@@ -340,6 +371,17 @@ public class OStorageRemote implements OStorageProxy, ORemotePushHandler, OStora
     return asyncNetworkOperationRetry(request, mode, recordId, callback, errorMessage, 0);
   }
 
+  /**
+   * 异步网络操作重试,调用baseNetworkOperation方法，执行请求与响应,开启新线程执行响应
+   * @param request
+   * @param mode
+   * @param recordId
+   * @param callback
+   * @param errorMessage
+   * @param retry
+   * @param <T>
+   * @return
+   */
   public <T extends OBinaryResponse> T asyncNetworkOperationRetry(
       final OBinaryAsyncRequest<T> request,
       int mode,
@@ -410,6 +452,15 @@ public class OStorageRemote implements OStorageProxy, ORemotePushHandler, OStora
         retry);
   }
 
+  /**
+   * 网络操作重试超时，同步执行响应，若响应超时则抛出异常
+   * @param request
+   * @param errorMessage
+   * @param retry
+   * @param timeout
+   * @param <T>
+   * @return
+   */
   public <T extends OBinaryResponse> T networkOperationRetryTimeout(
       final OBinaryRequest<T> request, final String errorMessage, int retry, int timeout) {
     return baseNetworkOperation(
@@ -455,13 +506,23 @@ public class OStorageRemote implements OStorageProxy, ORemotePushHandler, OStora
     return networkOperationRetryTimeout(request, errorMessage, connectionRetry, 0);
   }
 
+  /**
+   * 基础网络操作，分配网络，执行请求及响应
+   * @param operation
+   * @param errorMessage
+   * @param retry
+   * @param <T>
+   * @return
+   */
   public <T> T baseNetworkOperation(
       final OStorageRemoteOperation<T> operation, final String errorMessage, int retry) {
     OStorageRemoteSession session = getCurrentSession();
+    //判断异步操作是否冲突
     if (session.commandExecuting)
       throw new ODatabaseException(
           "Cannot execute the request because an asynchronous operation is in progress. Please use a different connection");
 
+    //分配URL及网络连接
     String serverUrl = null;
     do {
       OChannelBinaryAsynchClient network = null;
@@ -483,6 +544,7 @@ public class OStorageRemote implements OStorageProxy, ORemotePushHandler, OStora
         }
       } while (network == null);
 
+      //开始执行操作,将执行标志置为true，防止其他操作冲突
       try {
         session.commandExecuting = true;
 
@@ -497,6 +559,7 @@ public class OStorageRemote implements OStorageProxy, ORemotePushHandler, OStora
           if (!network.tryLock()) continue;
         }
 
+        //操作执行，执行请求及响应
         return operation.execute(network, session);
       } catch (ONotSendRequestException e) {
         connectionManager.remove(network);

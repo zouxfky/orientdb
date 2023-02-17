@@ -24,8 +24,8 @@ import java.io.IOException;
 
 /** Synchronous implementation of binary channel. */
 public class OChannelBinarySynchClient extends OChannelBinaryClientAbstract {
-  /*
-      连接对象构造方法，socket连接服务器，直接调用父级构造方法
+  /**
+   * 连接对象构造方法，socket连接服务器，直接调用父级构造方法
    */
   public OChannelBinarySynchClient(
       final String remoteHost,
@@ -37,8 +37,8 @@ public class OChannelBinarySynchClient extends OChannelBinaryClientAbstract {
     super(remoteHost, remotePort, iDatabaseName, iConfig, protocolVersion);
   }
 
-  /*
-      开始客户端请求，写入命令、sessionID、token，无需写入锁
+  /**
+   * 开始客户端请求，写入命令、sessionID、token，无需写入锁
    */
   public void beginRequest(final byte iCommand, final int sessionId, final byte[] token)
       throws IOException {
@@ -47,8 +47,8 @@ public class OChannelBinarySynchClient extends OChannelBinaryClientAbstract {
     writeBytes(token);
   }
 
-  /*
-      开始响应服务端，读取数据流，无需读取锁
+  /**
+   * 开始响应服务端，读取数据流，无需读取锁
    */
   public byte[] beginResponse(final boolean token) throws IOException {
     currentStatus = readByte();

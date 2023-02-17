@@ -7,6 +7,11 @@ import com.orientechnologies.orient.enterprise.channel.binary.OChannelDataOutput
 import java.io.IOException;
 
 /** Created by tglman on 07/06/16. */
+
+/**
+ * 二进制请求接口，供各个操作请求类实现
+ * @param <T>
+ */
 public interface OBinaryRequest<T extends OBinaryResponse> {
 
   void write(final OChannelDataOutput network, OStorageRemoteSession session) throws IOException;

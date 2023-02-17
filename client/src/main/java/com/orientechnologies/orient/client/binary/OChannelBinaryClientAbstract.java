@@ -55,8 +55,8 @@ public abstract class OChannelBinaryClientAbstract extends OChannelBinary {
   protected byte currentStatus;
   protected int currentSessionId;
 
-  /*
-      连接对象构造方法，socket连接服务器
+  /**
+   * 连接对象构造方法，socket连接服务器
    */
   public OChannelBinaryClientAbstract(
       final String remoteHost,
@@ -172,8 +172,8 @@ public abstract class OChannelBinaryClientAbstract extends OChannelBinary {
     return rootException;
   }
 
-  /*
-      添加读取锁，清空输入，释放读取锁
+  /**
+   * 添加读取锁，清空输入，释放读取锁
    */
   @Override
   public void clearInput() throws IOException {
@@ -204,29 +204,29 @@ public abstract class OChannelBinaryClientAbstract extends OChannelBinary {
     return srvProtocolVersion;
   }
 
-  /*
-      获取服务器地址
+  /**
+   * 获取服务器地址
    */
   public String getServerURL() {
     return serverURL;
   }
 
-  /*
-      尝试获取锁
+  /**
+   * 尝试获取锁
    */
   public boolean tryLock() {
     return getLockWrite().tryAcquireLock();
   }
 
-  /*
-      释放锁
+  /**
+   * 释放锁
    */
   public void unlock() {
     getLockWrite().unlock();
   }
 
-  /*
-       判断响应状态值，Ok或异常
+  /**
+   * 判断响应状态值，Ok或异常
    */
   protected int handleStatus(final byte iResult, final int iClientTxId) throws IOException {
     if (iResult == OChannelBinaryProtocol.RESPONSE_STATUS_OK
